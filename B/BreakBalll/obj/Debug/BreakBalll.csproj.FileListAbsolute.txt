@@ -1,0 +1,6 @@
+D:\Visual Studio projects\BreakBalll\BreakBalll\bin\Debug\BreakBalll.exe.config
+D:\Visual Studio projects\BreakBalll\BreakBalll\obj\Debug\BreakBalll.csprojResolveAssemblyReference.cache
+D:\Visual Studio projects\BreakBalll\BreakBalll\bin\Debug\BreakBalll.exe
+D:\Visual Studio projects\BreakBalll\BreakBalll\bin\Debug\BreakBalll.pdb
+D:\Visual Studio projects\BreakBalll\BreakBalll\obj\Debug\BreakBalll.exe
+D:\Visual Studio projects\BreakBalll\BreakBalll\obj\Debug\BreakBalll.pdb
