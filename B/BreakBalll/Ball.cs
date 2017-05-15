@@ -8,11 +8,11 @@ namespace BreakBalll
 {
     class Ball
     {
-        private char body ;
-        private int xpos, ypos;
-        private int[] oldLoc=new int [2];
-        public Ball()
-        { body = '*'; }
+        private char body;
+        private Display display;
+        private int xpos, ypos, deadY;
+        private int moveDirectionX, moveDirectionY; 
+        private int[] oldLoc = new int[2];
         public Ball(int x, int y)
         {
             body = '*';
