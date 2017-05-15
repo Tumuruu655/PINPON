@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,129 +13,94 @@ namespace BreakBalll
         private Ball ball;
         private Table table;
         private Display dis;
-        private ConsoleKeyInfo key = new ConsoleKeyInfo();
-        private int[] move = new int[2];
         private int HEIGHT, WIDTH;
         private int blockNum = 0;
+        private int heart=3;
         public Bump(String start)
-        {
+        {   
             map = new Map();
-            HEIGHT = map.BODY.GetLength(0);
-            WIDTH = map.BODY.GetLength(1);
+            HEIGHT = Map.body.GetLength(0);
+            WIDTH = Map.body.GetLength(1);
             blockNum = map.Block.BlockNum;
             ball = new Ball(WIDTH, HEIGHT);
-            table = new Table(WIDTH , HEIGHT, WIDTH);
+            table = new Table(WIDTH, HEIGHT, WIDTH);
             dis = new Display();
-            dis.drawMap(map.BODY);
+            dis.drawMap(Map.body);
             for (int i = 0; i < table.BODY.Length; i++)
             {
-                map.BODY[table.YPOS, i + table.XPOS] = table.BODY[i];
+                Map.body[table.YPOS, i + table.XPOS] = table.BODY[i];
             }
-            map.BODY[ball.Ypos, ball.Xpos] = ball.Body;
+            Map.body[ball.Ypos, ball.Xpos] = ball.Body;
             dis.drawTable(table.XPOS, table.YPOS);
-            dis.drawBall(ball.Xpos, ball.Ypos, ball.Body);
-            move[0] = 1;
-            move[1] = -1;
+            Thread.Sleep(100);
             ehleh();
-            Console.ReadKey();
+            for (int i=heart ; 0 < i; i--)
+            {
+                Console.ReadKey();
+                map.BallMove(ball.Xpos, ball.Ypos, table.XPOS + 2, table.YPOS - 1, ball.Body);
+                ball.Xpos = table.XPOS + 2;
+                ball.Ypos = table.YPOS - 1;
+                ehleh();
+            }
+            dis.gameover(WIDTH/3, HEIGHT/2);
+
+                Console.ReadKey();
         }
 
-        public void ehleh()
+        private void ehleh()
         {
-            while (true)
+            Boolean dead = false;
+            while (dead != true)
             {
-                if (Console.KeyAvailable)
-                {
-                    key = Console.ReadKey(true);
-                    switch (key.Key)
-                    {
-                        case ConsoleKey.LeftArrow:
-                            if (table.Move(-1))
-                            {
-                                map.BODY[table.YPOS, table.XPOS + 6] = ' ';
-                                dis.clear(table.XPOS + 6, table.YPOS);
-                                map.BODY[table.YPOS, table.XPOS] = '#';
-                                dis.drawBall(table.XPOS, table.YPOS, table.BODY[0]);
-                            }
-                            break;
-                        case ConsoleKey.RightArrow:
-                            if (table.Move(1))
-                            {
-                                map.BODY[table.YPOS, table.XPOS-1] = ' ';
-                                dis.clear(table.XPOS-1, table.YPOS);
-                                map.BODY[table.YPOS, table.XPOS + 5] = '#';
-                                dis.drawBall(table.XPOS + 5, table.YPOS, table.BODY[0]);
-                            }
-                            break;
-                        case ConsoleKey.Escape:
-                            Console.WriteLine("pause");
-                            Console.ReadKey(true);
-                            break;
-                    }
-                }
-                move = cbump(move, map.BODY, ball.Xpos, ball.Ypos);
-                dis.clear(ball.OLDLOC[0], ball.OLDLOC[1]);
-                ball.Move(move[0], move[1]);
-                map.BallMove(ball.OLDLOC[0], ball.OLDLOC[1], ball.Xpos, ball.Ypos, ball.Body);
+                checkBump();
+                table.Move();
+                ball.Move();
                 Thread.Sleep(100);
-                dis.drawBall(ball.Xpos, ball.Ypos, ball.Body);
+                dead = ball.dead();
             }
+            heart--;
         }
-        public int[] cbump(int[] move, char[,] map, int posX, int posY)
+        public void checkBump()
         {
-            if (blockNum==0)
+            if (blockNum == 0)
             {
                 Console.ReadKey();
             }
-            if (posY == map.GetLength(1) - 2 && posX > 0 && posX < map.GetLength(0) - 2)
+            if (Map.body[ball.Ypos, ball.Xpos + ball.MoveDirectionX] != ' ')
             {
-                Console.ReadKey(true);
-                int[] a = new int[2];
-                return a;
-            }
-            if (map[posY, posX + move[0]] != ' ')
-            {
-                map = checkBump(map, posX + move[0], posY);
-                move[0] = -1 * move[0];
-                if (map[posY + move[1], posX] != ' ')
+                checkBlockBump(ball.Xpos + ball.MoveDirectionX, ball.Ypos);
+                ball.MoveDirectionX = -1 * ball.MoveDirectionX;
+                if (Map.body[ball.Ypos + ball.MoveDirectionY, ball.Xpos] != ' ')
                 {
-                    map = checkBump(map, posX, posY + move[1]);
-                    move[1] = -1 * move[1];
+                    checkBlockBump(ball.Xpos, ball.Ypos + ball.MoveDirectionY);
+                    ball.MoveDirectionY = -1 * ball.MoveDirectionY;
                 }
             }
-            else if (map[posY + move[1], posX] != ' ')
+            else if (Map.body[ball.Ypos + ball.MoveDirectionY, ball.Xpos] != ' ')
             {
-                map = checkBump(map, posX, posY + move[1]);
-                move[1] = -1 * move[1];
-                if (map[posY, posX + move[0]] != ' ')
+                checkBlockBump(ball.Xpos, ball.Ypos + ball.MoveDirectionY);
+                ball.MoveDirectionY = -1 * ball.MoveDirectionY;
+                if (Map.body[ball.Ypos, ball.Xpos + ball.MoveDirectionX] != ' ')
                 {
-                    map = checkBump(map, posX + move[0], posY);
-                    move[1] = -1 * move[1];
+                    checkBlockBump(ball.Xpos + ball.MoveDirectionX, ball.Ypos);
+                    ball.MoveDirectionY = -1 * ball.MoveDirectionY;
                 }
             }
-            else if (map[posY + move[1], posX + move[0]] != ' ')
+            else if (Map.body[ball.Ypos + ball.MoveDirectionY, ball.Xpos + ball.MoveDirectionX] != ' ')
             {
-                map = checkBump(map, posX + move[0], posY + move[1]);
-                move[0] = -1 * move[0];
-                move[1] = -1 * move[1];
+                checkBlockBump(ball.Xpos + ball.MoveDirectionX, ball.Ypos + ball.MoveDirectionY);
+                ball.MoveDirectionX = -1 * ball.MoveDirectionX;
+                ball.MoveDirectionY = -1 * ball.MoveDirectionY;
             }
-            return move;
         }
-        private char[,] checkBump(char[,] map1, int posX, int posY)
+        private void checkBlockBump(int posX, int posY)
         {
-            if (map1[posY, posX] == '=')
+            if (Map.body[posY, posX] == '=')
             {
-                map1[posY, posX] = ' ';
+                Map.body[posY, posX] = ' ';
                 map.Block.deletBlock(posX, posY);
-                dis.clear(posX, posY);
-                return map1;
             }
-            else if (map1[posY, posX] == '*')
-            {
-                return map1;
-            }
-            else
-                return map1;
         }
+
     }
 }
