@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +10,7 @@ namespace BreakBalll
     class Map
     {
         private const int HEIGHT=20, WIDTH = 24;
-        private char[,] body = new char[HEIGHT, WIDTH];
+        public static char[,] body = new char[HEIGHT, WIDTH];
         private Block[] blocks = new Block[2];
         private Block block;
         private int[] change=new int[2];
@@ -36,7 +36,7 @@ namespace BreakBalll
         {
             for (int i = 0; i < blocks.Length; i++)
             {
-                StreamReader file1 = new StreamReader(@"D:\Visual Studio projects\BreakBalll\Blocks\block" + i + ".txt");
+                StreamReader file1 = new StreamReader(@"C:\Users\tumuruu\Documents\GitHub\PINPON\B\Blocks\block" + i + ".txt");
                 blocks[i] = new Block(file1);
             }
         }
@@ -54,11 +54,6 @@ namespace BreakBalll
                     body[i+1, j+1] = block.Blocks[i, j];
                 }
             }
-        }
-        public char[,] BODY
-        {
-            get { return body; }
-            set {this.body=value;}
         }
         public Block Block
         {
