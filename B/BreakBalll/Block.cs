@@ -29,7 +29,7 @@ namespace BreakBalll
                         blockNum++;
                     blocks[counter, i] = temp[i];
                 }
-                counter=counter+1;
+                counter++;
             }
         }
         public void deletBlock(int xPos, int yPos)
