@@ -15,11 +15,16 @@ namespace BreakBalll
         { body = '*'; }
         public Ball(int x, int y)
         {
+             display = new Display();
+            moveDirectionX = 1;
+            moveDirectionY = -1;
+            deadY = y - 2;
             body = '*';
-            this.xpos = x/2;
-            this.ypos = y-3;
+            this.xpos = x / 2;
+            this.ypos = y - 3;
             oldLoc[0] = xpos;
             oldLoc[1] = ypos;
+            Map.body[ypos, xpos] = ' ';
         }
         public int[] OLDLOC
         {
