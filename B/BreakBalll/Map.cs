@@ -13,11 +13,12 @@ namespace BreakBalll
         public static char[,] body = new char[HEIGHT, WIDTH];
         private Block[] blocks = new Block[2];
         private Block block;
+        private Display ds = new Display();
+        private int blockNumber=-1;
         private int[] change=new int[2];
         public Map()
         {
             readBlocks();
-            block = blocks[0];
             for (int i = 0; i < HEIGHT; i++)
             {
                 for (int j = 0; j < WIDTH; j++)
@@ -30,29 +31,32 @@ namespace BreakBalll
                         body[i, j] = ' ';
                 }
             }
-            setBlock(block);
+            setBlock();
         }
         private void readBlocks()
         {
             for (int i = 0; i < blocks.Length; i++)
             {
-                StreamReader file1 = new StreamReader(@"C:\Users\tumuruu\Documents\GitHub\PINPON\B\Blocks\block" + i + ".txt");
+                StreamReader file1 = new StreamReader(@"C:\Users\Nandinbayr-pc\Documents\GitHub\PINPON\B\Blocks\block" + i + ".txt");
                 blocks[i] = new Block(file1);
             }
         }
-        public void BallMove(int oldPosX, int oldPosY, int xPos, int yPos, char ballBody)
+        public void setBlock()
         {
-            body[oldPosY, oldPosX]=' ';
-            body[yPos, xPos]=ballBody;
-        }
-        private void setBlock(Block block)
-        {
-            for (int i = 0; i < block.Blocks.GetLength(0); i++)
+            try
             {
-                for (int j = 0; j < block.Blocks.GetLength(1); j++)
+                blockNumber++;
+                block = blocks[blockNumber];
+                for (int i = 0; i < block.Blocks.GetLength(0); i++)
                 {
-                    body[i+1, j+1] = block.Blocks[i, j];
+                    for (int j = 0; j < block.Blocks.GetLength(1); j++)
+                    {
+                        body[i + 1, j + 1] = block.Blocks[i, j];
+                    }
                 }
+            }
+            catch(IndexOutOfRangeException ex){
+                ds.won();
             }
         }
         public Block Block
@@ -62,3 +66,4 @@ namespace BreakBalll
         }
     }
 }
+
