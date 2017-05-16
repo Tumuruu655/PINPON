@@ -24,7 +24,7 @@ namespace BreakBalll
             this.ypos = y - 3;
             oldLoc[0] = xpos;
             oldLoc[1] = ypos;
-            Map.body[ypos, xpos] = ' ';
+            Map.body[ypos, xpos] = '#';
         }
         public void Move()
         {
@@ -42,6 +42,8 @@ namespace BreakBalll
             if (ypos >= deadY)
             {
                 display.clearBall(xpos, ypos);
+
+                Map.body[ypos, xpos] = ' ';
                 return true;
             }
             else
