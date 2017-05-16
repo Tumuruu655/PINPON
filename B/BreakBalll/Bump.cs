@@ -9,13 +9,14 @@ namespace BreakBalll
 {
     class Bump
     {
+        private Keyboard keyboard=new Keyboard();
         private Map map;
         private Ball ball;
         private Table table;
         private Display dis;
         private int HEIGHT, WIDTH;
         private int blockNum = 0;
-        private int heart=3;
+        private int heart=2;
         public Bump(String start)
         {   
             map = new Map();
@@ -25,7 +26,7 @@ namespace BreakBalll
             ball = new Ball(WIDTH, HEIGHT);
             table = new Table(WIDTH, HEIGHT, WIDTH);
             dis = new Display();
-            dis.drawMap(Map.body);
+            dis.drawMap();
             for (int i = 0; i < table.BODY.Length; i++)
             {
                 Map.body[table.YPOS, i + table.XPOS] = table.BODY[i];
@@ -33,18 +34,31 @@ namespace BreakBalll
             Map.body[ball.Ypos, ball.Xpos] = ball.Body;
             dis.drawTable(table.XPOS, table.YPOS);
             Thread.Sleep(100);
+            dis.showLife(heart);
+            dis.showScore(0);
+           // blockNum = 2;
             ehleh();
             for (int i=heart ; 0 < i; i--)
             {
-                Console.ReadKey();
-                map.BallMove(ball.Xpos, ball.Ypos, table.XPOS + 2, table.YPOS - 1, ball.Body);
+                //Console.ReadKey(true);
+                keyboard.ReadKey();
                 ball.Xpos = table.XPOS + 2;
                 ball.Ypos = table.YPOS - 1;
                 ehleh();
             }
             dis.gameover(WIDTH/3, HEIGHT/2);
-
-                Console.ReadKey();
+            keyboard.ReadKey();
+            Console.WriteLine();
+            for (int i = 0; i < Map.body.GetLength(0); i++)
+            {
+                for (int j = 0; j < Map.body.GetLength(1); j++)
+                {
+                    Console.Write(Map.body[i,j]);
+                }
+                Console.WriteLine();
+            }
+            Console.ReadKey();
+                
         }
 
         private void ehleh()
@@ -54,11 +68,29 @@ namespace BreakBalll
             {
                 checkBump();
                 table.Move();
+                Thread.Sleep(50);
+                table.Move();
                 ball.Move();
-                Thread.Sleep(100);
+                Thread.Sleep(50);
+                table.Move();
                 dead = ball.dead();
+                if (map.Block.BlockNum < 0)
+                {
+                    dis.clearBall(ball.Xpos, ball.Ypos);
+                    livelWon();
+                    
+                }
             }
             heart--;
+            dis.showLife(heart);
+        }
+        public void livelWon()
+        {
+            map.setBlock();
+            dis.drawMap();
+            keyboard.ReadKey();
+            ball.Xpos = table.XPOS + 2;
+            ball.Ypos = table.YPOS - 1;
         }
         public void checkBump()
         {
@@ -66,25 +98,17 @@ namespace BreakBalll
             {
                 Console.ReadKey();
             }
-            if (Map.body[ball.Ypos, ball.Xpos + ball.MoveDirectionX] != ' ')
+            if (checkDirection('X'))
             {
-                checkBlockBump(ball.Xpos + ball.MoveDirectionX, ball.Ypos);
                 ball.MoveDirectionX = -1 * ball.MoveDirectionX;
-                if (Map.body[ball.Ypos + ball.MoveDirectionY, ball.Xpos] != ' ')
-                {
-                    checkBlockBump(ball.Xpos, ball.Ypos + ball.MoveDirectionY);
+                if (checkDirection('Y'))
                     ball.MoveDirectionY = -1 * ball.MoveDirectionY;
-                }
             }
-            else if (Map.body[ball.Ypos + ball.MoveDirectionY, ball.Xpos] != ' ')
+            else if (checkDirection('Y'))
             {
-                checkBlockBump(ball.Xpos, ball.Ypos + ball.MoveDirectionY);
                 ball.MoveDirectionY = -1 * ball.MoveDirectionY;
-                if (Map.body[ball.Ypos, ball.Xpos + ball.MoveDirectionX] != ' ')
-                {
-                    checkBlockBump(ball.Xpos + ball.MoveDirectionX, ball.Ypos);
-                    ball.MoveDirectionY = -1 * ball.MoveDirectionY;
-                }
+                if (checkDirection('X'))
+                    ball.MoveDirectionX = -1 * ball.MoveDirectionX;
             }
             else if (Map.body[ball.Ypos + ball.MoveDirectionY, ball.Xpos + ball.MoveDirectionX] != ' ')
             {
@@ -93,14 +117,36 @@ namespace BreakBalll
                 ball.MoveDirectionY = -1 * ball.MoveDirectionY;
             }
         }
+        private bool checkDirection(char Direction)
+        {
+            if (Direction == 'X')
+            {
+                if(Map.body[ball.Ypos, ball.Xpos + ball.MoveDirectionX] != ' ')
+                {
+                    checkBlockBump(ball.Xpos + ball.MoveDirectionX, ball.Ypos);
+                    return true;
+                }
+            }
+            else if (Direction == 'Y')
+            {
+                if (Map.body[ball.Ypos + ball.MoveDirectionY, ball.Xpos] != ' ')
+                {
+                    checkBlockBump(ball.Xpos, ball.Ypos + ball.MoveDirectionY);
+                    return true;
+                }   
+            }
+            return false;
+        }
         private void checkBlockBump(int posX, int posY)
         {
-            if (Map.body[posY, posX] == '=')
+            if (Map.body[posY, posX] == map.Block.body)
             {
                 Map.body[posY, posX] = ' ';
                 map.Block.deletBlock(posX, posY);
+              //  dis.showScore(map.Block.Score);
             }
         }
 
     }
 }
+
