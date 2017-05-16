@@ -26,7 +26,7 @@ namespace BreakBalll
         public void Move()
         {
             key.check();
-            if (key.direction == "left")
+            if (key.keyInfo == "left")
             {
                 if (xpos > 1)
                 {
@@ -37,7 +37,7 @@ namespace BreakBalll
                     dis.drawTable(xpos, ypos);
                 }
             }
-            else if (key.direction == "right")
+            else if (key.keyInfo == "right")
             {
                 if (xpos <= rightMax - body.Length)
                 {
