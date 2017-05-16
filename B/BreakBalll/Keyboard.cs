@@ -9,10 +9,25 @@ namespace BreakBalll
     class Keyboard
     {
         private ConsoleKeyInfo key;
-        public string direction;
+        public string keyInfo;
+        private const string RIGHT = "right", LEFT = "left";
+        private Display display;
         public Keyboard()
         {
               key = new ConsoleKeyInfo();
+              display = new Display(); 
+        }
+        public void ReadKey()
+        {
+            bool isEnter = false;
+            while (!isEnter)
+            {
+                if (Console.ReadKey(true).Key == ConsoleKey.Enter)
+                {
+                    display.pauseClear();
+                    isEnter = true;
+                }
+            }
         }
         public void check()
         {
@@ -22,20 +37,29 @@ namespace BreakBalll
                 switch (key.Key)
                 {
                     case ConsoleKey.LeftArrow:
-                        direction = "left";
+                        keyInfo = "left";
                         break;
                     case ConsoleKey.RightArrow:
-                        direction = "right";
+                        keyInfo = "right";
                         break;
+                    
                     case ConsoleKey.Escape:
-                        Console.WriteLine("pause");
-                        Console.ReadKey(true);
+                        display.pauseWrite();
+                        bool isEscape=false;
+                        while (!isEscape)
+                        {
+                            if (Console.ReadKey(true).Key == ConsoleKey.Escape)
+                            {
+                                display.pauseClear();
+                                isEscape=true;
+                            }
+                        }
                         break;
                 }
             }
             else
             {
-                direction = "null";
+                keyInfo = "null";
             }
         }
     }
